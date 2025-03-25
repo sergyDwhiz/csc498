@@ -1,0 +1,154 @@
+<!doctype html>
+<html>
+<head>
+    <title>Language Translator</title>
+    <!-- Favicon and Icons -->
+    <link rel="icon" href="/static/favicon copy.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
+    <link rel="manifest" href="/static/site.webmanifest">
+    <link rel="icon" type="image/png" sizes="192x192" href="/static/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/static/android-chrome-512x512.png">
+    <!-- Google Fonts: Ubuntu -->
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Ubuntu', sans-serif;
+            background-color: #f2f2f2;
+            animation: fadeIn 1s ease-in;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        .github-link {
+            position: fixed;
+            top: 50px;
+            right: 20px;
+            font-size: 2rem;
+            color: #333;
+            transition: color 0.3s ease;
+            z-index: 1000;
+        }
+        .github-link:hover {
+            color: #4078c0;
+        }
+        .translate-container {
+            margin-top: 50px;
+        }
+        textarea {
+            resize: none;
+            transition: background-color 0.3s ease;
+        }
+        textarea:focus {
+            background-color: #fff3cd;
+        }
+        .output-text {
+            background-color: #e9ecef;
+        }
+        .copy-icon {
+            cursor: pointer;
+            color: #007bff;
+            margin-left: 5px;
+            transition: color 0.3s ease;
+        }
+        .copy-icon:hover {
+            color: #0056b3;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 7cm;
+        }
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .translate-container { margin-top: 20px; }
+            .github-link { top: 10px; font-size: 1.5rem; }
+            textarea { font-size: 0.9rem; }
+        }
+        @media (max-width: 576px) {
+            .github-link { top: 5px; right: 10px; font-size: 1.2rem; }
+            h1 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Fixed GitHub link at top right -->
+    <a href="https://github.com/sergyDwhiz/csc498" class="github-link" target="_blank" title="View on GitHub">
+        <i class="fab fa-github"></i>
+    </a>
+    <div class="container translate-container">
+        <!-- Page Title -->
+        <div class="row mb-3">
+            <div class="col-md-12 text-center">
+                <h1 class="mb-0">Language Translator</h1>
+            </div>
+        </div>
+        <!-- Language selection on top -->
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <form id="langForm" method="post">
+                    <div class="form-group">
+                        <label for="language">Select target language:</label>
+                        <select class="form-control" name="language" id="language">
+                            {% for code, name in languages.items() %}
+                                <option value="{{ code }}" {% if lang_choice == code %}selected{% endif %}>{{ name.capitalize() }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- Translation form -->
+        <form id="translateForm" method="post">
+            <!-- Hidden language input -->
+            <input type="hidden" name="language" id="hiddenLanguage" value="{% if lang_choice %}{{ lang_choice }}{% endif %}">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="sourceText">Enter text in English:</label>
+                    <textarea class="form-control" name="text" id="sourceText" rows="6" placeholder="Type text here..."></textarea>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="translatedText">Translation:</label>
+                    <div class="input-group">
+                        <textarea class="form-control output-text" id="translatedText" rows="6" readonly placeholder="Translation appears here...">
+                            {% if translation %}{{ translation }}{% endif %}
+                        </textarea>
+                        <div class="input-group-append">
+                            <span class="input-group-text copy-icon" id="copyBtn" title="Copy">
+                                <i class="fas fa-copy"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row align-items-center">
+                <div class="col-md-12 text-center">
+                    <button type="submit" class="btn btn-primary mt-2">Translate</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!-- Footer -->
+    <footer class="footer">
+        Built with ♡
+    </footer>
+    <!-- JavaScript for copy functionality and syncing language selection -->
+    <script>
+        document.getElementById('copyBtn').addEventListener('click', function() {
+            var text = document.getElementById('translatedText').value;
+            navigator.clipboard.writeText(text).then(function() {
+                alert('Copied to clipboard!');
+            });
+        });
+        document.getElementById('langForm').addEventListener('change', function() {
+            var lang = document.getElementById('language').value;
+            document.getElementById('hiddenLanguage').value = lang;
+        });
+    </script>
+</body>
+</html>
